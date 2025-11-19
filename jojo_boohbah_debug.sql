@@ -38,7 +38,7 @@ WHERE energy_level > (SELECT AVG(energy_level) FROM boohbah);
 
 
 -- Question 6:
-SELECT name, energy_level
+SELECT name
 FROM boohbah
 WHERE energy_level > (
     SELECT MAX(power)
@@ -50,6 +50,7 @@ WHERE energy_level > (
 -- Question 7: 
 SELECT b.name, s.stand_name
 FROM boohbah b
+JOIN boohbah_stand_link l ON b.boohbah_id = l.boohbah_id
 JOIN jojo_stand s ON b.boohbah_id = s.stand_id
 WHERE b.energy_level > 80;
 
@@ -72,12 +73,8 @@ WHERE (boohbah_id, stand_id) IN
 
 
 -- Question 10:
-MERGE INTO boohbah b
-USING (
-    SELECT l.boohbah_id
-    FROM boohbah_stand_link l
-    JOIN jojo_stand s ON l.stand_id = s.stand_id
-) temp_name
-ON (b.boohbah_id = src.boohbah_id)
-WHEN MATCHED THEN
-  UPDATE SET b.energy_level = 999;
+MERGE INTO boohbah b 
+USING boohbah_stand_link l 
+ON (b.boohbah_id = l.boohbah_id)
+WHEN MATCHED THEN  
+    UPDATE SET b.energy_level = b.energy_level + 10;
